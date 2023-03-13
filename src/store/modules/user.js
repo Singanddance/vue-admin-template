@@ -28,63 +28,98 @@ const mutations = {
 }
 
 const actions = {
-  // user login
-  login({ commit }, userInfo) {
+  // 处理登录的业务
+  async login({ commit }, userInfo) {
+    //结构出用户名与密码
     const { username, password } = userInfo
-    return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
+    let result = await login({ username: username.trim(), password: password });
+    //目前使用的是mock的数据,mock的code是20000
+    if (result.code == 20000) {
+      const { data } = result
+      commit('SET_TOKEN', data.token);
+      setToken(data.token)
+      return 'ok'
+    } else {
+      return Promise.reject(new Error('faile'))
+    }
+    // return new Promise((resolve, reject) => {
+    //   login({ username: username.trim(), password: password }).then(response => {
+    //     const { data } = response
+    //     commit('SET_TOKEN', data.token)
+    //     setToken(data.token)
+    //     resolve()
+    //   }).catch(error => {
+    //     reject(error)
+    //   })
+    // })
   },
 
-  // get user info
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
+  // 获取用户信息
+  async getInfo({ commit, state }) {
+    let result = await getInfo(state.token);
+    if (result.code == 20000) {
+      const { data } = result;
+      if (!data) {
+        return Promise.reject(new Error('验证失败，请重新登录。'));
+      }
+      const { name, avatar } = data;
+      commit('SET_NAME', name);
+      commit('SET_AVATAR', avatar);
+    }else{
+      return Promise.reject(new Error('faile'));
+    }
+    // return new Promise((resolve, reject) => {
+    //   getInfo(state.token).then(response => {
+    //     const { data } = response
 
-        if (!data) {
-          return reject('Verification failed, please Login again.')
-        }
+    //     if (!data) {
+    //       return reject('Verification failed, please Login again.')
+    //     }
 
-        const { name, avatar } = data
+    //     const { name, avatar } = data
 
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
-      }).catch(error => {
-        reject(error)
-      })
-    })
+    //     commit('SET_NAME', name)
+    //     commit('SET_AVATAR', avatar)
+    //     resolve(data)
+    //   }).catch(error => {
+    //     reject(error)
+    //   })
+    // })
   },
 
-  // user logout
-  logout({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        removeToken() // must remove  token  first
-        resetRouter()
-        commit('RESET_STATE')
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // remove token
-  resetToken({ commit }) {
-    return new Promise(resolve => {
-      removeToken() // must remove  token  first
+  // 退出登录
+  async logout({ commit, state }) {
+    let result = await logout(state.token);
+    if(result.code == 20000){
+      removeToken();
+      resetRouter();
       commit('RESET_STATE')
-      resolve()
-    })
+    }else{
+      return Promise.reject(new Error('faile'));
+    }
+    // return new Promise((resolve, reject) => {
+    //   logout(state.token).then(() => {
+    //     removeToken() // must remove  token  first
+    //     resetRouter()
+    //     commit('RESET_STATE')
+    //     resolve()
+    //   }).catch(error => {
+    //     reject(error)
+    //   })
+    // })
+  },
+
+  // 删除token
+  async resetToken({ commit }) {
+    let result = await removeToken();
+    if(result.code == 20000){
+      commit('RESET_STATE')
+    }
+    // return new Promise(resolve => {
+    //   removeToken() // must remove  token  first
+    //   commit('RESET_STATE')
+    //   resolve()
+    // })
   }
 }
 
