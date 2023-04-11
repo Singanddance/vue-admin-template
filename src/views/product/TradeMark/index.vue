@@ -64,7 +64,6 @@
       :limit="limit"
       :total="total"
       @pagination="getPagination"
-      ref="Pagination"
     ></Pagination>
 
     <!-- 
@@ -124,7 +123,6 @@
 </template>
 
 <script>
-import Pagination from "@/components/Pagination";
 export default {
   name: "tradeMark",
   data() {
@@ -304,9 +302,9 @@ export default {
           //当用户点击确定按钮时候触发
           //向服务器发请求
           this.loading = true;
-          let result = await this.$API.tradeMark.reqDeleteTradeMark();
+          let result = await this.$API.tradeMark.reqDeleteTradeMark(row.id);
           //如果请求成功的操作
-          if (result.code === 200) {
+          if (result.code == 200) {
             this.$message.success("删除成功!");
             //再次获取品牌列表的数据
             //如果当页面还有数据则停留在当前页,如果当前页没有数据则去到上一页
@@ -325,10 +323,7 @@ export default {
           this.$message.info("已取消删除");
         });
     },
-  },
-  components: {
-    Pagination,
-  },
+  }
 };
 </script>
 

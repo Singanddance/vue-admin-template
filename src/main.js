@@ -37,6 +37,18 @@ Vue.config.productionTip = false
 
 //引入相关API请求接口
 import API from '@/api'
+//引入三级联动组件,注册为全局组件
+import CategorySelect from '@/components/CategorySelect';
+Vue.component(CategorySelect.name,CategorySelect);
+
+//引入HintButton组件,注册为全局组件
+import HintButton from '@/components/HintButton';
+Vue.component(HintButton.name,HintButton);
+
+//引入分页器组件,注册为全局组件
+import Pagination from '@/components/Pagination';
+Vue.component(Pagination.name,Pagination);
+
 //组件实例的原型的原型对象指向的是vur.prototype
 //任意取件都可以使用API相关的接口
 Vue.prototype.$API = API

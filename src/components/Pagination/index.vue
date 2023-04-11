@@ -21,39 +21,27 @@
     :page-sizes="[3, 5, 10]"
     @current-change="handleCurrentChange"
     @size-change="handleSizeList"
-    layout="prev, pager,next,->,sizes,total"
+    layout="prev, pager,next,jumper,->,sizes,total"
   >
   </el-pagination>
 </template>
 
 <script>
 export default {
+  name:'Pagination',
+  // ['total','page','limit'],
   props: {
     total: {
       type: Number,
       default: 0,
     },
-    page: { type: Number, default: 0 },
-    limit: { type: Number, default: 0 },
-  },
-  // ['total','page','limit'],
-  name: "pagination",
-  data() {
-    return {
-      pageVal:0
-    }
-  },
-  watch:{
-    page(val,oldVal){
-      this.pageVal=val
-      console.log(val,oldVal);
-    }
+    page: { type: Number, default: 1 },
+    limit: { type: Number, default: 3 },
   },
   methods: {
     handleCurrentChange(pager) {
       //pager表示点击选中的页码
       //将pager回传到父组件
-      console.log(111,this.page);
       this.$emit("pagination", { page: pager, limit: this.limit });
     },
     //当分页器某一页需要展示数据的条数发生变化的时候触发,
